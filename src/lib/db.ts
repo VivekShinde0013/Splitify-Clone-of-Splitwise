@@ -7,7 +7,11 @@ const isPostgres = databaseUrl.startsWith("postgres://") || databaseUrl.startsWi
 
 if (process.env.NODE_ENV === "production") {
   if (isPostgres) {
-    prisma = new PrismaClient();
+    const { Pool } = require("pg");
+    const { PrismaPg } = require("@prisma/adapter-pg");
+    const pool = new Pool({ connectionString: databaseUrl });
+    const adapter = new PrismaPg(pool);
+    prisma = new PrismaClient({ adapter });
   } else {
     // Dynamically load to prevent native build errors on serverless environments
     const { PrismaBetterSqlite3 } = require("@prisma/adapter-better-sqlite3");
@@ -22,7 +26,11 @@ if (process.env.NODE_ENV === "production") {
   };
   if (!globalWithPrisma.prisma) {
     if (isPostgres) {
-      globalWithPrisma.prisma = new PrismaClient();
+      const { Pool } = require("pg");
+      const { PrismaPg } = require("@prisma/adapter-pg");
+      const pool = new Pool({ connectionString: databaseUrl });
+      const adapter = new PrismaPg(pool);
+      globalWithPrisma.prisma = new PrismaClient({ adapter });
     } else {
       const { PrismaBetterSqlite3 } = require("@prisma/adapter-better-sqlite3");
       const adapter = new PrismaBetterSqlite3({ url: databaseUrl });
