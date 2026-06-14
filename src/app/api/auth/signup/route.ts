@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { hashPassword } from "../login/route";
+import dns from "dns";
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,6 +20,22 @@ export async function POST(req: NextRequest) {
     if (!emailRegex.test(emailNorm)) {
       return NextResponse.json(
         { error: "Invalid email address format" },
+        { status: 400 }
+      );
+    }
+
+    const domain = emailNorm.split("@")[1];
+    try {
+      const records = await dns.promises.resolveMx(domain);
+      if (!records || records.length === 0) {
+        return NextResponse.json(
+          { error: "Email domain does not exist or cannot receive emails" },
+          { status: 400 }
+        );
+      }
+    } catch (dnsError: any) {
+      return NextResponse.json(
+        { error: "Email domain does not exist or cannot receive emails" },
         { status: 400 }
       );
     }
