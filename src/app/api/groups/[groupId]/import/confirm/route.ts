@@ -47,7 +47,7 @@ export async function POST(
     const importedPayments: any[] = [];
 
     // Run DB writes in a transaction
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       for (const entry of keptEntries) {
         const entryDate = new Date(entry.date);
 

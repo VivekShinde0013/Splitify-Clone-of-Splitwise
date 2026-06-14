@@ -153,7 +153,7 @@ export async function POST(
     }
 
     // Write to database in a transaction
-    const expense = await prisma.$transaction(async (tx) => {
+    const expense = await prisma.$transaction(async (tx: any) => {
       const exp = await tx.expense.create({
         data: {
           groupId,

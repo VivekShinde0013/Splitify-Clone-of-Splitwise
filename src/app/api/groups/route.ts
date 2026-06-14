@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Use transaction to create group and add creator as member
-    const group = await prisma.$transaction(async (tx) => {
+    const group = await prisma.$transaction(async (tx: any) => {
       const g = await tx.group.create({
         data: { name },
       });
