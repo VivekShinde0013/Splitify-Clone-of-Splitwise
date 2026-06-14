@@ -2,7 +2,19 @@
 
 Splitify is a high-fidelity shared expenses web application built using Next.js, React, Tailwind CSS, PostgreSQL/SQLite, and Prisma ORM. It was designed to help a group of flatmates (Aisha, Rohan, Priya, Meera, Sam, Dev) import a messy spreadsheet, resolve data anomalies, and simplify outstanding debts.
 
-This project was built using **Google DeepMind's Antigravity AI** as the primary engineering collaborator, following strict guidelines from the assignment instructions.
+This project was built in collaboration with AI, following strict guidelines from the assignment instructions.
+
+---
+
+## AI Collaborator Used
+
+This project was built using **Google DeepMind's Antigravity AI** as the primary software engineering collaborator. It assisted in implementing:
+* The custom RFC 4180-compliant CSV parsing engine.
+* The 12-rule CSV anomaly detection pipeline.
+* Interactive UI wizards and ledger breakdown views.
+* Secure credentials authentication and server-side DNS MX domain validation.
+
+For details on the exact prompts used, AI errors caught, and solutions implemented, please refer to the [AI_USAGE.md](file:///c:/General/Splitwise%20close%2520assignment/AI_USAGE.md) file.
 
 ---
 
