@@ -17,7 +17,7 @@ Our importer parses `expenses_export.csv` exactly as provided and resolves at le
 | **5** | **Settlement Logged as Expense** | Expense description contains keywords like "settle", "payment", "repay", or "paid back". | Intercepted and recorded the row as a `Payment` record in the database instead of an `Expense` record. | Aisha / Group Balances |
 | **6** | **Negative Amount (Refund)** | Amount value is less than 0. | Treated as a Refund. Created an expense with negative split balances, which correctly reverses the credit and debt flows. | Group Ledger |
 | **7** | **Exact Duplicate Row** | Identical rows with same Date, Description, Amount, Payer, and Split members. | Grouped duplicates. Kept the first row, auto-flagged duplicates to be discarded, and surfaced them for approval in the Duplicate Resolver UI. | **Meera's request** ("Clean up the duplicates — but I want to approve anything...") |
-| **8** | **Conflicting Duplicate** | Rows on same Date, Payer, and Description but with different amounts (e.g., same dinner logged twice with different costs). | Flagged as a conflict. Surfaced in the Duplicate Resolver UI, blocking import until the user manually selects which transaction wins. | **Meera's request** ("Two people logged same dinner with different amounts") |
+| **8** | **Conflicting Duplicate** | Rows on same Date, Payer, and Description but with different amounts (e.g., same dinner logged twice with different costs). | Flagged as a conflict. Surfaced in the Duplicate Resolver UI, pre-selecting KEEP for the first row and DELETE for all subsequent siblings by default to allow instant import confirmation while still permitting manual override. | **Meera's request** ("Two people logged same dinner with different amounts") |
 | **9** | **Missing Date / Invalid Format** | Date cell is empty or does not parse as a valid ISO/American date. | Defaulted the transaction date to the current date and flagged a warning in the import report. | Importer Reliability |
 | **10** | **Missing Description** | Description cell is empty. | Defaulted the description to "Imported Shared Expense" and flagged a warning. | Importer Reliability |
 | **11** | **Payer Not in Group** | Payer name is misspelled or does not match existing group members. | Auto-created the user using a normalized system email (e.g., `rohans@example.com` for "Rohan S") and added them as a member of the group. | User Management |
@@ -94,7 +94,7 @@ erDiagram
 ```
 
 ### Key Models & Fields
-- **`User`**: Core user accounts. Emails are normalized to lowercase. Passwords are secure SHA-256 hashes generated from credentials login/signup.
+- **`User`**: Core user accounts. Emails are validated using regex patterns and verified via server-side DNS MX record lookups to prevent fake domain registrations. Passwords are secure SHA-256 hashes generated from credentials login/signup.
 - **`GroupMember`**: Many-to-many join table connecting users and groups with a unique constraint on `[groupId, userId]`.
 - **`Expense`**: Logged purchases. Split type is stored as a string enum (`EQUAL`, `UNEQUAL`, `PERCENTAGE`, `SHARE`).
 - **`ExpenseSplit`**: Represents each user's liability for an expense. `amount` stores their calculated share in INR, while `ratioVal` stores the original ratio/percentage/shares for mathematical auditability.

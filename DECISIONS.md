@@ -11,7 +11,7 @@ This document tracks the significant product and technical design decisions made
   * **Option A**: Silent Guessing. Automatically merge or delete duplicate entries based on heuristics (e.g. keeping the first one).
   * **Option B**: Crash the Import. Fail the import process and require the user to fix the CSV manually.
   * **Option C (Chosen)**: Surfaced Conflict Resolution UI. Auto-flag exact duplicates, group conflicting entries, and present them in a wizard interface for user approval before writing to the database.
-* **Rationale**: Option C satisfies Meera's request ("Clean up duplicates — but I want to approve anything the app deletes or changes") and preserves data integrity without crashing the app or guessing silently.
+* **Rationale**: Option C satisfies Meera's request ("Clean up duplicates — but I want to approve anything the app deletes or changes") and preserves data integrity without crashing the app or guessing silently. Furthermore, we pre-select KEEP for the first duplicate/conflict row and DELETE for other sibling rows by default. This auto-resolves all conflicts, enabling instant confirmation without forcing the user to click through every item, while still leaving them in full control to change the actions in the wizard before saving.
 
 ---
 
@@ -82,4 +82,4 @@ This document tracks the significant product and technical design decisions made
   * **Option A**: Magic Links / Third-Party OAuth. Requires complex SMTP setup, external server keys, and redirects, which breaks local off-grid testing.
   * **Option B**: Password Credentials with Native BCrypt. Requires compiling native C++ binaries (`bcrypt` node extension), which often crashes on Windows environments during `npm install`.
   * **Option C (Chosen)**: Password Credentials with Node Built-in SHA-256 Hashing. Employs `crypto.createHash("sha256")` via the Node standard library.
-* **Rationale**: Option C is robust, secure, and has zero external dependencies. It works flawlessly out-of-the-box on all OS platforms (especially Windows) without compile dependencies. For ease of manual evaluation, users auto-created during CSV imports are given the default password `password123`.
+* **Rationale**: Option C is robust, secure, and has zero external dependencies. It works flawlessly out-of-the-box on all OS platforms (especially Windows) without compile dependencies. In addition to syntax validation using regular expressions, we perform a server-side DNS MX record check for the email domain during signup to prevent users from registering with fake or invalid domains. For ease of manual evaluation, users auto-created during CSV imports are given the default password `password123`.

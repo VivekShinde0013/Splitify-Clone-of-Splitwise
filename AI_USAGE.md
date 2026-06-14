@@ -22,6 +22,10 @@ This document lists the AI tools used, the key prompts executed, and three concr
 ### Start of Phase 10 (Credentials-Based Auth)
 > "i want to add ID and password also for login and sign up do that changes and also do changes according to it in documentation also"
 
+### Start of Phase 11 & 12 (Email Verification & CSV Conflict Pre-selection)
+> "in this if we use fake email still it is signing up with it and also after importing csv and do changes if i click on confirm import it is not giving any responce it says please resolve all confliting duplicate before proceeding make it able to solve conflicts and proceed further"
+> "Verify that the email domain actually exists and is active (e.g., performing a DNS MX lookup to see if it can receive emails)."
+
 ---
 
 ## 3. AI Mistakes & Resolutions

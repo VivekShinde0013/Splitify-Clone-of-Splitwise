@@ -8,13 +8,13 @@ This project was built using **Google DeepMind's Antigravity AI** as the primary
 
 ## Key Features
 
-1. **Credentials-Based Authentication**: Secure login and signup using email and password. Passwords are hashed using SHA-256 via the built-in Node `crypto` library.
-2. **CSV Expense Inporter**:
+1. **Credentials-Based Authentication**: Secure login and signup using email and password. Email syntax is validated on both frontend and backend using regex, and the domain is verified using server-side DNS MX lookup to prevent fake email signups. Passwords are hashed using SHA-256 via the built-in Node `crypto` library.
+2. **CSV Expense Importer**:
    - Ingests `expenses_export.csv` exactly as provided.
    - Detects and resolves **12 distinct categories of anomalies** (USD exchange rates, early leave/late join bounds, refunds, duplicate entries, and settlement conversions).
 3. **Interactive Duplicate Resolver (Meera's Request)**:
    - Group duplicate transactions (exact and conflicting dinners).
-   - Wizard interface prompting the user to select which rows to keep or discard before saving to the database.
+   - Wizard interface pre-populating resolution choices (first row defaults to `KEEP` and subsequent rows to `DELETE`) so the user can confirm the import immediately, while still allowing them to manually customize selections before saving.
 4. **Itemized Debt Breakdown (Rohan's Request)**:
    - Click on any simplified debt in the sidebar to open a detailed ledger list.
    - Shows exactly which split expenses and payments contribute to the net debt balance.
@@ -67,8 +67,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 3. Click the **Import CSV** button in the header.
 4. Click **Choose CSV File** and select `expenses_export.csv` (or upload a custom mock CSV).
 5. The UI transitions to **Step 2 (Resolve Duplicates)**:
-   - View exact duplicates (auto-flagged to delete duplicates) and conflicts (e.g., same dinner, different amounts), allowing you to choose which one wins.
-   - Check the **System Anomaly Log** table showing Priya's converted USD rows, Sam's excluded March split shares, Meera's excluded April split shares, and converted settlements.
+    - View exact duplicates and conflicts (e.g., same dinner, different amounts). The interface pre-selects the first row in each duplicate/conflict group to KEEP and subsequent rows to Discard by default, allowing you to confirm the import immediately or customize the choices.
+    - Check the **System Anomaly Log** table showing Priya's converted USD rows, Sam's excluded March split shares, Meera's excluded April split shares, and converted settlements.
 6. Click **Confirm Import**.
 7. View **Step 3 (Import Report)** summarizing the final imported counts. Click Close.
 8. Click on any simplified debt in the sidebar to open Rohan's **Debt Ledger Breakdown** modal.
