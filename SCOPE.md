@@ -46,6 +46,7 @@ erDiagram
         String id PK
         String email UNIQUE
         String name
+        String password
         DateTime createdAt
     }
     Group {
@@ -93,7 +94,7 @@ erDiagram
 ```
 
 ### Key Models & Fields
-- **`User`**: Core user accounts. Emails are normalized to lowercase.
+- **`User`**: Core user accounts. Emails are normalized to lowercase. Passwords are secure SHA-256 hashes generated from credentials login/signup.
 - **`GroupMember`**: Many-to-many join table connecting users and groups with a unique constraint on `[groupId, userId]`.
 - **`Expense`**: Logged purchases. Split type is stored as a string enum (`EQUAL`, `UNEQUAL`, `PERCENTAGE`, `SHARE`).
 - **`ExpenseSplit`**: Represents each user's liability for an expense. `amount` stores their calculated share in INR, while `ratioVal` stores the original ratio/percentage/shares for mathematical auditability.

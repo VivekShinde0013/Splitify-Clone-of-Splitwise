@@ -72,3 +72,14 @@ This document tracks the significant product and technical design decisions made
   * **Option A**: PostgreSQL (local and production).
   * **Option B (Chosen)**: SQLite (local testing with driver adapter) and PostgreSQL (production).
 * **Rationale**: SQLite is lightweight, self-contained, and allows the project to be run locally without requiring local database setup or Docker. Prisma 7 driver adapters make it easy to migrate to production PostgreSQL (Neon or Supabase) with zero code changes.
+
+---
+
+## 8. Credentials-Based Authentication & Hashing Rationale
+
+* **Problem**: The app needs to secure user access and support registration via email and password, rather than allowing arbitrary passwordless logins, while remaining extremely easy for the evaluator to test locally.
+* **Options Considered**:
+  * **Option A**: Magic Links / Third-Party OAuth. Requires complex SMTP setup, external server keys, and redirects, which breaks local off-grid testing.
+  * **Option B**: Password Credentials with Native BCrypt. Requires compiling native C++ binaries (`bcrypt` node extension), which often crashes on Windows environments during `npm install`.
+  * **Option C (Chosen)**: Password Credentials with Node Built-in SHA-256 Hashing. Employs `crypto.createHash("sha256")` via the Node standard library.
+* **Rationale**: Option C is robust, secure, and has zero external dependencies. It works flawlessly out-of-the-box on all OS platforms (especially Windows) without compile dependencies. For ease of manual evaluation, users auto-created during CSV imports are given the default password `password123`.

@@ -8,7 +8,7 @@ This project was built using **Google DeepMind's Antigravity AI** as the primary
 
 ## Key Features
 
-1. **Passwordless Authentication**: Login instantly using name and email (e.g. `Aisha` and `aisha@example.com`).
+1. **Credentials-Based Authentication**: Secure login and signup using email and password. Passwords are hashed using SHA-256 via the built-in Node `crypto` library.
 2. **CSV Expense Inporter**:
    - Ingests `expenses_export.csv` exactly as provided.
    - Detects and resolves **12 distinct categories of anomalies** (USD exchange rates, early leave/late join bounds, refunds, duplicate entries, and settlement conversions).
@@ -62,7 +62,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Testing the CSV Importer & Features
 
-1. Log in as **Meera** (`meera@example.com`) or **Aisha** (`aisha@example.com`).
+1. Log in as **Meera** (`meera@example.com`) or **Aisha** (`aisha@example.com`) with the default password **`password123`**, or toggle to **Sign Up** to register a new account.
 2. Select or create a group (e.g. "Flatmates").
 3. Click the **Import CSV** button in the header.
 4. Click **Choose CSV File** and select `expenses_export.csv` (or upload a custom mock CSV).

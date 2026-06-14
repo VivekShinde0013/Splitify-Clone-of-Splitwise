@@ -19,6 +19,9 @@ This document lists the AI tools used, the key prompts executed, and three concr
 ### Start of Phase 8 (Debt Breakdown)
 > "Rohan wants to see exactly which expenses make up what he owes. Modify page.tsx to add a click handler on the simplified debt list. When clicked, it should calculate the exact ledger entries (his split shares, his paid expenses, and settlements) between the debtor and creditor and display them in a list."
 
+### Start of Phase 10 (Credentials-Based Auth)
+> "i want to add ID and password also for login and sign up do that changes and also do changes according to it in documentation also"
+
 ---
 
 ## 3. AI Mistakes & Resolutions

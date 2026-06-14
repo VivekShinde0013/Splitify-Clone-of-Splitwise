@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { parseCSV } from "@/lib/csvParser";
+import { hashPassword } from "@/app/api/auth/login/route";
 
 type RouteParams = Promise<{ groupId: string }>;
 
@@ -265,7 +266,11 @@ export async function POST(
         
         if (!user) {
           user = await prisma.user.create({
-            data: { name: rawPayer.trim(), email: systemEmail },
+            data: { 
+              name: rawPayer.trim(), 
+              email: systemEmail,
+              password: hashPassword("password123")
+            },
           });
         }
         payerUser = user;
@@ -314,7 +319,11 @@ export async function POST(
           
           if (!user) {
             user = await prisma.user.create({
-              data: { name: rawName.trim(), email: systemEmail },
+              data: { 
+                name: rawName.trim(), 
+                email: systemEmail,
+                password: hashPassword("password123")
+              },
             });
           }
           sUser = user;

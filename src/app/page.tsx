@@ -235,8 +235,10 @@ export default function Home() {
   // --- Auth State ---
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [isSignUp, setIsSignUp] = useState(false);
   const [loginName, setLoginName] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [showAuthForm, setShowAuthForm] = useState(false);
   const [activeTab, setActiveTab] = useState<"trips" | "housemates" | "partner" | "anyone">("trips");
@@ -659,31 +661,75 @@ export default function Home() {
     setImportError("");
   };
 
-  // Handler: Login
-  const handleLogin = async (e: React.FormEvent) => {
+  // Handler: Login / Signup
+  const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");
-    if (!loginName.trim() || !loginEmail.trim()) {
-      setLoginError("Name and Email are required");
-      return;
-    }
 
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: loginName.trim(), email: loginEmail.trim().toLowerCase() }),
-      });
+    const email = loginEmail.trim().toLowerCase();
+    const password = loginPassword;
+    const name = loginName.trim();
 
-      const data = await res.json();
-      if (!res.ok) {
-        setLoginError(data.error || "Login failed");
-      } else {
-        localStorage.setItem("splitify_user", JSON.stringify(data));
-        setCurrentUser(data);
+    if (isSignUp) {
+      if (!name || !email || !password) {
+        setLoginError("Name, Email, and Password are required");
+        return;
       }
-    } catch (err: any) {
-      setLoginError("Failed to connect to server");
+      if (password.length < 6) {
+        setLoginError("Password must be at least 6 characters long");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          setLoginError(data.error || "Sign up failed");
+        } else {
+          localStorage.setItem("splitify_user", JSON.stringify(data));
+          setCurrentUser(data);
+          setShowAuthForm(false);
+          // Reset fields
+          setLoginName("");
+          setLoginEmail("");
+          setLoginPassword("");
+        }
+      } catch (err: any) {
+        setLoginError("Failed to connect to server");
+      }
+    } else {
+      if (!email || !password) {
+        setLoginError("Email and Password are required");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          setLoginError(data.error || "Login failed");
+        } else {
+          localStorage.setItem("splitify_user", JSON.stringify(data));
+          setCurrentUser(data);
+          setShowAuthForm(false);
+          // Reset fields
+          setLoginName("");
+          setLoginEmail("");
+          setLoginPassword("");
+        }
+      } catch (err: any) {
+        setLoginError("Failed to connect to server");
+      }
     }
   };
 
@@ -1014,6 +1060,7 @@ export default function Home() {
               <button
                 onClick={() => {
                   setLoginError("");
+                  setIsSignUp(false);
                   setShowAuthForm(true);
                 }}
                 className="text-slate-600 hover:text-teal-500 font-bold text-sm transition cursor-pointer"
@@ -1023,6 +1070,7 @@ export default function Home() {
               <button
                 onClick={() => {
                   setLoginError("");
+                  setIsSignUp(true);
                   setShowAuthForm(true);
                 }}
                 className={`bg-[#1CC29F] hover:bg-[#12B291] text-white font-bold text-sm px-4.5 py-2 rounded-lg transition active:scale-97 cursor-pointer`}
@@ -1079,7 +1127,11 @@ export default function Home() {
 
             <div>
               <button
-                onClick={() => setShowAuthForm(true)}
+                onClick={() => {
+                  setLoginError("");
+                  setIsSignUp(true);
+                  setShowAuthForm(true);
+                }}
                 className={`text-white font-extrabold text-base px-8 py-3.5 rounded-xl transition duration-200 active:scale-97 cursor-pointer`}
                 style={{ 
                   backgroundColor: currentTheme.color,
@@ -1416,7 +1468,11 @@ export default function Home() {
               </p>
               <div>
                 <button
-                  onClick={() => setShowAuthForm(true)}
+                  onClick={() => {
+                    setLoginError("");
+                    setIsSignUp(true);
+                    setShowAuthForm(true);
+                  }}
                   className="bg-transparent border-2 border-white hover:bg-white hover:text-[#8656CD] text-white font-extrabold text-base px-8 py-3 rounded-xl transition duration-200 cursor-pointer"
                 >
                   Sign up
@@ -1597,8 +1653,8 @@ export default function Home() {
             <div>
               <h4 className="font-bold text-sm text-[#FF652F] uppercase tracking-widest mb-4">Account</h4>
               <ul className="space-y-2 text-sm text-slate-500 font-semibold">
-                <li><span onClick={() => setShowAuthForm(true)} className="hover:text-teal-500 cursor-pointer">Log in</span></li>
-                <li><span onClick={() => setShowAuthForm(true)} className="hover:text-teal-500 cursor-pointer">Sign up</span></li>
+                <li><span onClick={() => { setLoginError(""); setIsSignUp(false); setShowAuthForm(true); }} className="hover:text-teal-500 cursor-pointer">Log in</span></li>
+                <li><span onClick={() => { setLoginError(""); setIsSignUp(true); setShowAuthForm(true); }} className="hover:text-teal-500 cursor-pointer">Sign up</span></li>
                 <li><span className="hover:text-teal-500 cursor-pointer">Reset password</span></li>
                 <li><span className="hover:text-teal-500 cursor-pointer">Settings</span></li>
               </ul>
@@ -1662,7 +1718,13 @@ export default function Home() {
             <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl p-8 relative transition-all animate-float">
               {/* Close Button */}
               <button
-                onClick={() => setShowAuthForm(false)}
+                onClick={() => {
+                  setShowAuthForm(false);
+                  setLoginName("");
+                  setLoginEmail("");
+                  setLoginPassword("");
+                  setLoginError("");
+                }}
                 className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition"
               >
                 <X className="w-5 h-5" />
@@ -1673,27 +1735,29 @@ export default function Home() {
                   <IndianRupee className="w-8 h-8" />
                 </div>
                 <h2 className="text-3xl font-extrabold tracking-tight text-white bg-clip-text bg-gradient-to-r from-teal-200 to-emerald-400">
-                  Welcome to Splitify
+                  {isSignUp ? "Sign Up for Splitify" : "Log In to Splitify"}
                 </h2>
                 <p className="mt-2 text-slate-400 text-sm">
-                  Passwordless authentication. Fast and secure.
+                  {isSignUp ? "Create a credentials account." : "Access your shared expenses."}
                 </p>
               </div>
 
-              <form onSubmit={handleLogin} className="space-y-5">
-                <div>
-                  <label htmlFor="loginName" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    Your Full Name
-                  </label>
-                  <input
-                    id="loginName"
-                    type="text"
-                    value={loginName}
-                    onChange={(e) => setLoginName(e.target.value)}
-                    placeholder="John Doe"
-                    className="w-full bg-slate-950 border border-slate-800/80 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition"
-                  />
-                </div>
+              <form onSubmit={handleAuthSubmit} className="space-y-5">
+                {isSignUp && (
+                  <div>
+                    <label htmlFor="loginName" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      Your Full Name
+                    </label>
+                    <input
+                      id="loginName"
+                      type="text"
+                      value={loginName}
+                      onChange={(e) => setLoginName(e.target.value)}
+                      placeholder="John Doe"
+                      className="w-full bg-slate-950 border border-slate-800/80 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition"
+                    />
+                  </div>
+                )}
 
                 <div>
                   <label htmlFor="loginEmail" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
@@ -1709,6 +1773,20 @@ export default function Home() {
                   />
                 </div>
 
+                <div>
+                  <label htmlFor="loginPassword" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                    Your Password
+                  </label>
+                  <input
+                    id="loginPassword"
+                    type="password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full bg-slate-950 border border-slate-800/80 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition"
+                  />
+                </div>
+
                 {loginError && (
                   <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-lg p-3 text-center">
                     {loginError}
@@ -1719,8 +1797,44 @@ export default function Home() {
                   type="submit"
                   className="w-full bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-slate-950 font-bold py-3 rounded-xl transition-all duration-250 active:scale-98 shadow-[0_0_15px_rgba(20,184,166,0.3)] cursor-pointer"
                 >
-                  Sign In / Sign Up
+                  {isSignUp ? "Sign Up" : "Log In"}
                 </button>
+
+                <p className="text-slate-400 text-xs text-center mt-4">
+                  {isSignUp ? (
+                    <>
+                      Already have an account?{" "}
+                      <span
+                        onClick={() => {
+                          setIsSignUp(false);
+                          setLoginError("");
+                          setLoginName("");
+                          setLoginEmail("");
+                          setLoginPassword("");
+                        }}
+                        className="text-teal-400 hover:underline cursor-pointer font-bold"
+                      >
+                        Log In
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      Don't have an account?{" "}
+                      <span
+                        onClick={() => {
+                          setIsSignUp(true);
+                          setLoginError("");
+                          setLoginName("");
+                          setLoginEmail("");
+                          setLoginPassword("");
+                        }}
+                        className="text-teal-400 hover:underline cursor-pointer font-bold"
+                      >
+                        Sign Up
+                      </span>
+                    </>
+                  )}
+                </p>
               </form>
             </div>
           </div>
