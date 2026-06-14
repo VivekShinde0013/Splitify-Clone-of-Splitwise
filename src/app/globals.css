@@ -24,3 +24,58 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Custom repeating triangle geometric mesh for landing page */
+.bg-mesh {
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40' viewBox='0 0 80 40'%3E%3Cpath d='M40 0 L80 40 L0 40 Z' fill='%231cc29f' fill-opacity='0.03'/%3E%3Cpath d='M40 40 L80 0 L0 0 Z' fill='%2312b291' fill-opacity='0.02'/%3E%3C/svg%3E");
+  background-size: 80px 40px;
+}
+
+.bg-mesh-tab {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='30' viewBox='0 0 60 30'%3E%3Cpath d='M30 0 L60 30 L0 30 Z' fill='%236b7280' fill-opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 60px 30px;
+}
+
+/* Floating animation for SVG geometric illustrations */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-8px) rotate(0.5deg);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Triangle hover animation */
+.hover-scale-triangle:hover {
+  transform: scale(1.03);
+  filter: brightness(1.05);
+  transition: all 0.2s ease-in-out;
+}
+
+/* Custom scrollbars for clean UI */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
