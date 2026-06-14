@@ -137,7 +137,7 @@ export async function POST(
 
     // Pre-fetch all group members
     const groupMemberMap = new Map<string, any>();
-    group.members.forEach((m) => {
+    group.members.forEach((m: any) => {
       groupMemberMap.set(normalizeName(m.user.name), m.user);
     });
 
@@ -348,7 +348,7 @@ export async function POST(
 
       // If splits list is empty, default to everyone in the group
       if (splitUsers.length === 0) {
-        group.members.forEach((m) => splitUsers.push(m.user));
+        group.members.forEach((m: any) => splitUsers.push(m.user));
         logAnomaly(
           rowNum,
           "Split Between",
@@ -447,7 +447,7 @@ export async function POST(
         amount: finalAmount,
         payerId: payerUser.id,
         payerName: payerUser.name,
-        participants: finalParticipants.map(u => ({ id: u.id, name: u.name })),
+        participants: finalParticipants.map((u: any) => ({ id: u.id, name: u.name })),
         splitType: isSettlement ? "SETTLEMENT" : splitType,
         isSettlement,
         originalRow: row,
@@ -474,7 +474,7 @@ export async function POST(
     const groupedRowNums = new Set<number>();
 
     // Step A: Group by Date + Payer + Amount
-    parsedEntries.forEach((entry) => {
+    parsedEntries.forEach((entry: any) => {
       const dateStr = entry.date.toISOString().split("T")[0];
       const key = `${dateStr}_${entry.payerId}_${entry.amount}`;
       if (!duplicateGroups[key]) {
@@ -504,14 +504,14 @@ export async function POST(
             "Row",
             `Duplicate of Row ${first.rowNum}`,
             "Exact Duplicate Entry",
-            `Auto-flagged Row ${group.slice(1).map(g => g.rowNum).join(", ")} for deletion, keeping Row ${first.rowNum}`,
+            `Auto-flagged Row ${group.slice(1).map((g: any) => g.rowNum).join(", ")} for deletion, keeping Row ${first.rowNum}`,
             "WARNING"
           );
 
           duplicatesToResolve.push({
             type: "EXACT",
             key,
-            rows: group.map((g, idx) => ({
+            rows: group.map((g: any, idx: number) => ({
               ...g,
               defaultAction: idx === 0 ? "KEEP" : "DELETE",
             })),
@@ -530,13 +530,13 @@ export async function POST(
           duplicatesToResolve.push({
             type: "CONFLICT",
             key,
-            rows: group.map((g) => ({
+            rows: group.map((g: any) => ({
               ...g,
               defaultAction: "RESOLVE_REQUIRED",
             })),
           });
         }
-        group.forEach(g => groupedRowNums.add(g.rowNum));
+        group.forEach((g: any) => groupedRowNums.add(g.rowNum));
       }
     }
 
@@ -544,7 +544,7 @@ export async function POST(
     const fuzzyKeywords = ["thalassa", "marina", "dinner", "rent"];
     const parsedEntriesByDate: Record<string, any[]> = {};
     
-    parsedEntries.forEach((entry) => {
+    parsedEntries.forEach((entry: any) => {
       if (groupedRowNums.has(entry.rowNum)) return; // Already grouped
       const dateStr = entry.date.toISOString().split("T")[0];
       if (!parsedEntriesByDate[dateStr]) {
@@ -597,7 +597,7 @@ export async function POST(
     }
 
     // Step D: Add remaining non-duplicate entries to the list
-    parsedEntries.forEach((entry) => {
+    parsedEntries.forEach((entry: any) => {
       if (!groupedRowNums.has(entry.rowNum)) {
         processedEntries.push({
           ...entry,
