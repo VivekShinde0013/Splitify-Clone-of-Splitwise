@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    const groups = memberships.map((m) => m.group);
+    const groups = memberships.map((m: any) => m.group);
 
     return NextResponse.json(groups, { status: 200 });
   } catch (error: any) {

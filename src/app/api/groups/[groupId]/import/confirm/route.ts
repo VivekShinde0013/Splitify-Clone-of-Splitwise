@@ -42,7 +42,7 @@ export async function POST(
     }
 
     // Filter to only kept entries
-    const keptEntries = entries.filter((e) => e.action === "KEEP");
+    const keptEntries = entries.filter((e: any) => e.action === "KEEP");
     const importedExpenses: any[] = [];
     const importedPayments: any[] = [];
 

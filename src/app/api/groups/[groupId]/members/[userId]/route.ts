@@ -17,7 +17,7 @@ export async function DELETE(
       where: { groupId, paidById: userId },
       select: { amount: true },
     });
-    const totalPaid = expensesPaid.reduce((sum, e) => sum + e.amount, 0);
+    const totalPaid = expensesPaid.reduce((sum: number, e: any) => sum + e.amount, 0);
 
     // Fetch expense splits owed by this user in this group
     const splitsOwed = await prisma.expenseSplit.findMany({
@@ -29,21 +29,21 @@ export async function DELETE(
       },
       select: { amount: true },
     });
-    const totalOwed = splitsOwed.reduce((sum, s) => sum + s.amount, 0);
+    const totalOwed = splitsOwed.reduce((sum: number, s: any) => sum + s.amount, 0);
 
     // Fetch settlements received by this user in this group
     const settlementsReceived = await prisma.payment.findMany({
       where: { groupId, toUserId: userId },
       select: { amount: true },
     });
-    const totalReceived = settlementsReceived.reduce((sum, p) => sum + p.amount, 0);
+    const totalReceived = settlementsReceived.reduce((sum: number, p: any) => sum + p.amount, 0);
 
     // Fetch settlements made by this user in this group
     const settlementsMade = await prisma.payment.findMany({
       where: { groupId, fromUserId: userId },
       select: { amount: true },
     });
-    const totalSettled = settlementsMade.reduce((sum, p) => sum + p.amount, 0);
+    const totalSettled = settlementsMade.reduce((sum: number, p: any) => sum + p.amount, 0);
 
     const netBalance = Number(
       (totalPaid - totalOwed - totalReceived + totalSettled).toFixed(2)

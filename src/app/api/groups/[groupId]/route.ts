@@ -81,7 +81,7 @@ export async function GET(
       );
     }
 
-    const members = group.members.map((m) => m.user);
+    const members = group.members.map((m: any) => m.user);
 
     // Initialize balance tracking for each member
     const balanceMap: Record<
@@ -98,7 +98,7 @@ export async function GET(
       }
     > = {};
 
-    members.forEach((user) => {
+    members.forEach((user: any) => {
       balanceMap[user.id] = {
         id: user.id,
         name: user.name,
@@ -112,12 +112,12 @@ export async function GET(
     });
 
     // 1. Calculate total paid by each user
-    group.expenses.forEach((expense) => {
+    group.expenses.forEach((expense: any) => {
       if (balanceMap[expense.paidById]) {
         balanceMap[expense.paidById].totalPaid += expense.amount;
       }
       // Calculate total owed by each user from splits
-      expense.splits.forEach((split) => {
+      expense.splits.forEach((split: any) => {
         if (balanceMap[split.userId]) {
           balanceMap[split.userId].totalOwed += split.amount;
         }
@@ -125,7 +125,7 @@ export async function GET(
     });
 
     // 2. Calculate settlements (payments)
-    group.payments.forEach((payment) => {
+    group.payments.forEach((payment: any) => {
       if (balanceMap[payment.fromUserId]) {
         balanceMap[payment.fromUserId].totalSettled += payment.amount;
       }
@@ -135,7 +135,7 @@ export async function GET(
     });
 
     // 3. Compute netBalance
-    members.forEach((user) => {
+    members.forEach((user: any) => {
       const b = balanceMap[user.id];
       // Formula: Net Balance = Total Paid - Total Owed - Total Received + Total Settled
       b.netBalance = Number(
@@ -147,7 +147,7 @@ export async function GET(
     const debtors: { id: string; amount: number }[] = [];
     const creditors: { id: string; amount: number }[] = [];
 
-    members.forEach((user) => {
+    members.forEach((user: any) => {
       const bal = balanceMap[user.id].netBalance;
       if (bal < -0.005) {
         debtors.push({ id: user.id, amount: -bal });
