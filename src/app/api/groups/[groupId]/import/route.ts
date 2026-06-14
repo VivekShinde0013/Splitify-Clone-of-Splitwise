@@ -530,9 +530,9 @@ export async function POST(
           duplicatesToResolve.push({
             type: "CONFLICT",
             key,
-            rows: group.map((g: any) => ({
+            rows: group.map((g: any, idx: number) => ({
               ...g,
-              defaultAction: "RESOLVE_REQUIRED",
+              defaultAction: idx === 0 ? "KEEP" : "DELETE",
             })),
           });
         }
@@ -584,8 +584,8 @@ export async function POST(
               type: "CONFLICT",
               key: `fuzzy_${dateStr}_${commonWords[0]}`,
               rows: [
-                { ...e1, defaultAction: "RESOLVE_REQUIRED" },
-                { ...e2, defaultAction: "RESOLVE_REQUIRED" }
+                { ...e1, defaultAction: "KEEP" },
+                { ...e2, defaultAction: "DELETE" }
               ]
             });
 

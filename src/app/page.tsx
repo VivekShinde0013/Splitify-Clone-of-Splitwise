@@ -680,6 +680,12 @@ export default function Home() {
         return;
       }
 
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        setLoginError("Invalid email address format");
+        return;
+      }
+
       try {
         const res = await fetch("/api/auth/signup", {
           method: "POST",
